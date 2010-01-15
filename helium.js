@@ -1,20 +1,6 @@
-//@@ Current restrictions:
-//	 1) All pages and stylesheets must be loaded from the same domain, including matching subdomains
-
-
-//on initial load, get a list of pages to process
-//first load all pages in the list and get a list of the stylesheets used on the page
-//when complete, load each stylesheet via XHR.
-//	Parse and store the selectors in an array for each stylesheet.
-//when complete, load 1st page in list.
-//for each stylesheet previously found for each page, check if its selectors are used on the current page
-//	If the selectors *are* used on the current page, remove them from the selector list
-//repeat the selector test for each page in the list.
-//at the end, all selectors that are used at least once should be filtered out.
-
-//load each stylesheet and parse its selectors. 
-//store an array consisting of each stylesheet and its selectors
-
+//Helium-css v1.0
+//Copyright 2010, Charles Lawrence
+//License: MIT License(http://opensource.org/licenses/mit-license.php) 
 
 var helium = {
 

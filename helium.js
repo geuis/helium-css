@@ -1,6 +1,7 @@
 //Helium-css v1.0
-//Copyright 2010, Charles Lawrence
+//Copyright 2010, Charles Lawrence http://twitter.com/geuis
 //License: MIT License(http://opensource.org/licenses/mit-license.php) 
+//release: 1/13/10
 
 var helium = {
 

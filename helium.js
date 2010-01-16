@@ -218,19 +218,29 @@ var helium = {
 		div.innerHTML = str;		
 		document.getElementsByTagName('body')[0].appendChild( frag );
 
-		//setup click-selector testing on the current page
-		var sels = document.querySelectorAll('#cssdetectID .selector');
+		//toggle selector visibility
+		var sels = document.querySelectorAll('#cssdetectID ul li');
 		for(var s=0; s<sels.length; s++){
-
 			(function(){
 				var i=s;
 				sels[i].addEventListener('click',function(){
-
-					console.log( document.querySelectorAll( this.innerHTML ) );
-
+					
+					this.style.opacity = '0.5';
+					
 				},false);
 			})();			
 		}
+
+		//setup click-selector testing on the current page
+		//var sels = document.querySelectorAll('#cssdetectID .selector');
+		//for(var s=0; s<sels.length; s++){
+		//	(function(){
+		//		var i=s;
+		//		sels[i].addEventListener('click',function(){
+		//			console.log( document.querySelectorAll( this.innerHTML ) );
+		//		},false);
+		//	})();			
+		//}
 
 		//setup New Test button
 		document.getElementById('cssreportResetID').addEventListener('click',function(){

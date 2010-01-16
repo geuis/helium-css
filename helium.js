@@ -378,7 +378,17 @@ var helium = {
 			var tmplink = links[i].getAttribute('href');
 
 			//append full URI if absent
-			if( tmplink.indexOf('http') !== 0 && tmplink.substr(0,2) !== '//'){
+			if( tmplink.indexOf('http') !== 0 && tmplink.substr(0,2) !== '//') {
+                // make sure that relative URLs work too
+                if (tmplink.indexOf('/') != 0) {
+                    var lastDir = window.location.pathname.lastIndexOf('/');
+                    if (lastDir > 0) {
+                        directory = window.location.pathname.substring(0, lastDir+1);
+                    } else {
+                        directory = '/';
+                    }
+                    tmplink = directory + tmplink;
+                }
 				tmplink = window.location.protocol + '//' + window.location.hostname + tmplink;
 			}
 
@@ -537,7 +547,12 @@ var helium = {
 		localStorage.cssdetect = JSON.stringify( helium.data );
 
 	},
-	
+
+    // when something goes wrong, nice to helium.clear() to nuke the local storage
+    clear:function() {
+        delete localStorage['cssdetect'];
+    },
+
 	get:function(url, index, callback){
 		if(window.attachEvent){
 			var http = new ActiveXObject("Microsoft.XMLHTTP");

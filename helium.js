@@ -389,7 +389,7 @@ var helium = {
                     }
                     tmplink = directory + tmplink;
                 }
-				tmplink = window.location.protocol + '//' + window.location.hostname + tmplink;
+				tmplink = window.location.protocol + '//' + window.location.hostname + ":" + window.location.port + tmplink;
 			}
 
 			//filter out urls not on this domain

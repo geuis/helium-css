@@ -370,9 +370,10 @@ var helium = {
 		}
 
 		//find link elements on the page
-		var links = document.querySelectorAll("link[type='text/css'][rel='stylesheet']");
-
-		for(var i=0; i<links.length; i++){
+		//var links = document.querySelectorAll("link[type='text/css'][rel='stylesheet']"); //## failing when type=text/css not being specified
+        var links = document.querySelectorAll("link[rel='stylesheet']");
+		
+        for(var i=0; i<links.length; i++){
 
 			//get href
 			var tmplink = links[i].getAttribute('href');
@@ -417,8 +418,9 @@ var helium = {
 			helium.nav( helium.data.findinglist );
 		}else{
 
-			//remove duplicates from stylesheets list
-			helium.data.stylesheets.sort();
+            //remove duplicates from stylesheets list
+            helium.data.stylesheets.sort();
+
 			for( var i=0; i < helium.data.stylesheets.length-1; i++){
 				if(helium.data.stylesheets[i] === helium.data.stylesheets[i+1]){
 					helium.data.stylesheets.splice(i--,1);

@@ -48,10 +48,10 @@ Usage is easy:
 
 
 IMPORTANT STUFF:
-1) Browser support: Helium works in the latest versions of Chrome, Safari, and Firefox. It was developed in Chrome and has been tested on Safari and Firefox. Chrome is the recommended browser to run Helium in at this time, but Safari and Firefox should be fine.
+1) Browser support: Helium works in the latest versions of Chrome, Safari, and Firefox. It also runs in IE8, but has not been tested in IE9. It was developed in Chrome and has been tested on Safari and Firefox. Chrome is the recommended browser to run Helium in at this time, but Safari, Firefox, and IE8+ should be fine.
 
 **Note: 
-    Internet Explorer 6/7/8. Helium *might* run in IE8. It hasn't been tested. It will NOT run in IE6 or 7. IE6 and IE7 do not support the javascript & DOM capabilities that allow Helium to work.
+    It will NOT run in IE6 or 7. IE6 and IE7 do not support the javascript & DOM capabilities that allow Helium to work.
 
     In due time, Helium *will* run in these browsers. Its incredibly important to web developers to be able to test IE, too. Helium needs a lot of extra work to support the older Internet Explorer browsers to patch around the missing features required. It will get done.
 

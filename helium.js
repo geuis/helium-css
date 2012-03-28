@@ -5,6 +5,8 @@
 
 var helium = {
 
+    callback : undefined,
+
 	data:{
 		//timeout
 		//status,
@@ -18,7 +20,9 @@ var helium = {
 
 
 	init:function(){
-
+        // Callback on init or default to running the report.
+        helium.callback = (arguments.length > 0) ? arguments[0] : helium.report;
+        
         //silently fail if localStorage is not available
         if( window.localStorage ){
 
@@ -117,7 +121,7 @@ var helium = {
 		
 		if( helium.data.status === 4 ){
 			//Finished, issue report
-			helium.report();
+			helium.callback();
 		}
 		
 		
@@ -335,8 +339,8 @@ var helium = {
 				helium.data.status = 4;
 				helium.save();
 				
-				//do report
-				helium.report();
+				//run callback
+				helium.callback();
 
 			}
 			

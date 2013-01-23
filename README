@@ -46,20 +46,18 @@ Usage is easy:
 
     *Blue: Pseudo-class selector. These are selectors like ".div:hover" or "input:focus". These are selectors that require user interaction to activate. Currently, Helium can't simulate the interactions required to see if these are found or not. It is the developer's responsibility to test for these manually.
 
+Browser Support:
+
+Any modern browser that supports LocalStorage and document.querySelector.
+
+I have decided I will never adapt Helium to support IE6 or 7.
 
 IMPORTANT STUFF:
-1) Browser support: Helium works in the latest versions of Chrome, Safari, and Firefox. It also runs in IE8, but has not been tested in IE9. It was developed in Chrome and has been tested on Safari and Firefox. Chrome is the recommended browser to run Helium in at this time, but Safari, Firefox, and IE8+ should be fine.
+1) No cross-domain stylesheets: Helium has to load the stylesheets on your site via XHR in order to parse out the selectors to test. This means that all stylesheets URLs have to be on the same domain as the pages being tested. There's currently no back-end server to proxy requests, but this might be an option in the future.
 
-**Note: 
-    It will NOT run in IE6 or 7. IE6 and IE7 do not support the javascript & DOM capabilities that allow Helium to work.
+2) No javascript errors on your pages: If Helium is run on a page that has one or more javascript errors, it can easily prevent Helium and other scripts from running on the page. This will stop your tests dead in their tracks. Verify ahead of time that all of the URLs you are testing do not generate any javascript errors. If you aren't sure, try running some Helium tests and see what page it stops at. Check out your error consoles on such pages.
 
-    In due time, Helium *will* run in these browsers. Its incredibly important to web developers to be able to test IE, too. Helium needs a lot of extra work to support the older Internet Explorer browsers to patch around the missing features required. It will get done.
-
-2) No cross-domain stylesheets: Helium has to load the stylesheets on your site via XHR in order to parse out the selectors to test. This means that all stylesheets URLs have to be on the same domain as the pages being tested. There's currently no back-end server to proxy requests, but this might be an option in the future.
-
-3) No javascript errors on your pages: If Helium is run on a page that has one or more javascript errors, it can easily prevent Helium and other scripts from running on the page. This will stop your tests dead in their tracks. Verify ahead of time that all of the URLs you are testing do not generate any javascript errors. If you aren't sure, try running some Helium tests and see what page it stops at. Check out your error consoles on such pages.
-
-4) No sitemap XML support: Right now, the URL list has to be line separated. No CSV or sitemap XML format is currently supported, though it will be in a future release.
+3) No sitemap XML support: Right now, the URL list has to be line separated. No CSV or sitemap XML format is currently supported, though it will be in a future release.
 
 
 

@@ -19,6 +19,7 @@ Installation is easy:
 
 2) Helium is initiated by calling the method "helium.init()". This has to be placed somewhere on the page where it gets called after page load. An example of this is:
 
+```javascript
 <script type="text/javascript">
 	window.addEventListener('load', function(){
 		
@@ -26,7 +27,7 @@ Installation is easy:
 
 	}, false);
 </script>
-
+```
 **Note: Depending on the javascript loading strategy your site employs, you may wish to place "helium.init()" within a location that executes javascript after page load.
 
 

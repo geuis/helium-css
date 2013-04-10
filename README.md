@@ -12,14 +12,15 @@ Helium accepts a list of URLs for different sections of a site then loads and pa
 ### Installation
 
 1. Add a script element somewhere on your site that is loaded into every page that will be tested. This is typically a header or footer section. The element looks like:
-	```
+
+	```html
 	<script type="text/javascript" src="path/to/helium.js"></script>
 	```
 	##### Note: path/to/helium.js needs to reflect the path of where you place the javascript file.
 
 2. Helium is initiated by calling the method "helium.init()". This has to be placed somewhere on the page where it gets called after page load. An example of this is:
 
-	```javascript
+	```html
 	<script type="text/javascript">
 		window.addEventListener('load', function(){
 			

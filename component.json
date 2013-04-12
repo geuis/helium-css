@@ -1,0 +1,10 @@
+{
+    "name": "helium",
+    "version": "1.0.0",
+    "main": "helium.js",
+    "ignore": [
+      "**/.*",
+      "node_modules",
+      "components"
+    ]
+}

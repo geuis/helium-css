@@ -470,6 +470,9 @@ var helium = {
 				//parse selectors. ##NEWLINE REMOVAL IS HACKISH, CAN BE DONE BETTER WITH A BETTER REGEX
 				var selectors = data.replace(/\n/g,'').match(/[^\}]+[\.\#\-\w]?(?=\{)/gim);
 
+				//prevent crash if there is a problem with the stylesheet
+				selectors = selectors || [];
+				
 				//results of selector tests
 				var results = [];
 

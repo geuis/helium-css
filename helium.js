@@ -545,17 +545,8 @@ var helium = {
 
 	},
 
-    //cross browser event handler
-    //##Should be able to attach events to all objects sizzle passes in
     on: function(target, ev, fn){
-
-        target = target[0] || target; //Sizzle passes through an array. Get the first element of the array or its object if index 0 doesnt exist
-
-        if( window.attachEvent ){
-            target.attachEvent('on'+ev, fn);
-        }else{
-            target.addEventListener(ev, fn, false);
-        }
+        target.addEventListener(ev, fn, false);
     },
 
 	//return info from localStorage

@@ -53,19 +53,29 @@ var helium = {
 		if( helium.data.status === 0 ){
 			//not started
 			
-			//prompt for list of pages
-			var frag = document.createDocumentFragment();
-			frag.appendChild( document.createElement('div') );
-			frag.lastChild.setAttribute('id','cssdetectID');
+			//prompt for list of pages. Build and display html overlay
+            var css = [
+                '#cssdetectID{width:500px;height:300px;background-color:#fff;position:absolute;top:20%;left:50%;margin-left:-250px;z-index:90000000;border:2px solid #000;padding:15px;}',
+                '#cssdetectTextarea{width:100%;min-height:200px;margin-bottom:10px;}',
+                '#cssdetectStart, #cssdetectRestart{float:right; margin-left:10px;}'
+            ];
+            var html = [
+                '<h2>Paste a list of pages on your site you want to test:</h2>',
+                '<textarea id="cssdetectTextarea"></textarea><br/><input type="button" id="cssdetectStart" value="Start"/>',
+                '<input type="button" id="cssdetectRestart" value="Reset to Beginning"/>'
+            ];
+            var style = document.createElement('style');
+                style.innerHTML = css.join('');
 
-			var html  = '<style>#cssdetectID{width:500px;height:300px;background-color:#fff;position:absolute;top:20%;left:50%;margin-left:-250px;z-index:90000000;border:2px solid #000;padding:15px;} #cssdetectTextarea{width:100%;min-height:200px;margin-bottom:10px;} #cssdetectStart, #cssdetectRestart{float:right; margin-left:10px;}</style>';
-			var style = '<h2>Paste a list of pages on your site you want to test:</h2><textarea id="cssdetectTextarea"></textarea><br/><input type="button" id="cssdetectStart" value="Start"/> <input type="button" id="cssdetectRestart" value="Reset to Beginning"/>';
-			frag.lastChild.innerHTML = html + style;
-			document.getElementsByTagName('body')[0].appendChild(frag);
+            var div = document.createElement('div');
+                div.id = 'cssdetectID';
+                div.innerHTML = html.join('');
+
+            helium.$('body')[0].appendChild(style);
+            helium.$('body')[0].appendChild(div);
+
 
 			//add listener to save list and start processing
-			//document.getElementById('cssdetectStart').addEventListener('click',function(){
-
             helium.on( helium.$('#cssdetectStart'), 'click', function(){
 
 				//currently based on new-line separated values. Eventually supports sitemap XML format and comma-delineated.
@@ -485,7 +495,7 @@ var helium = {
 						for(var t=0; t < sel.length; t++ ){
 						
 							arr.push({s: sel[t], v: false});
-						
+
 						}
 						
 						results.push( arr );

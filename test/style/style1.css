@@ -19,3 +19,7 @@ div{
 
 .nonexistent{}
 .nonexistent2{}
+
+.nonexistent,body,{}
+
+:test{}

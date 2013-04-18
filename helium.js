@@ -237,7 +237,7 @@ var helium = {
         for(var s=0; s<sels.length; s++){
             (function(){
                 var i=s;
-                helium.on( sels[i], 'click', function(){					
+                helium.on( sels[i], 'click', function(){
                     this.style.opacity = '0.5';
                 },false);
             })();			
@@ -469,11 +469,11 @@ var helium = {
 				data = data.replace(/\/\*[\s\S]*?\*\//gim,"");
 
 				//parse selectors. ##NEWLINE REMOVAL IS HACKISH, CAN BE DONE BETTER WITH A BETTER REGEX
-				var selectors = data.replace(/\n/g,'').match(/[^\}]+[\.\#\-\w]?(?=\{)/gim);
+				var selectors = data.replace(/\n/g,'').match(/[^\}]+[\.\#\-\w]?(?=\{)/gim) || [];
 
 				//results of selector tests
 				var results = [];
-console.log( selectors );
+
 				for(var e=0; e<selectors.length; e++){
 
 					var sel = selectors[e].split(',');
@@ -549,8 +549,9 @@ console.log( selectors );
     on: function(target, ev, fn){
         //only add events to the first element in the target/querySelectorAll nodeList.
         //don't need to add in support for multiple targets
+        target = target[0] || target;
         console.log( target );
-        target[0].addEventListener(ev, fn, false);
+        target.addEventListener(ev, fn, false);
     },
 
 	//return info from localStorage

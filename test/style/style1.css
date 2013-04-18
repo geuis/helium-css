@@ -1,0 +1,21 @@
+html,body{
+    padding:0;
+    margin:0;
+}
+
+div{
+    border:1px solid #000;
+}
+
+.test1{
+    border:2px solid #cc0000;
+    padding:5px;
+}
+
+#test2{
+    padding:5px;
+    border:2px solid #cc00cc;
+}
+
+.nonexistent{}
+.nonexistent2{}

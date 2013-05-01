@@ -1,5 +1,5 @@
 //Helium-css v1.0
-//Copyright 2010, Charles Lawrence http://twitter.com/geuis
+//Copyright 2013, Charles Lawrence http://twitter.com/geuis
 //License: MIT License(http://opensource.org/licenses/mit-license.php) 
 //release: 1/13/10
 
@@ -32,6 +32,7 @@ var helium = {
             helium.save();
 
             helium.checkstatus();
+
         }else{
             throw new Error('localStorage API not found');
         }
@@ -46,9 +47,9 @@ var helium = {
 		//3: check if selectors found on pages
 		//4: finished, show report
 
-		if(typeof helium.data.status === 'undefined')
-			helium.data.status = 0;	
-
+		if(typeof helium.data.status === 'undefined'){
+			helium.data.status = 0;
+		}
 
 		if( helium.data.status === 0 ){
 			//not started
@@ -58,14 +59,15 @@ var helium = {
                 '#cssdetectID{width:500px;height:300px;background-color:#fff;position:absolute;top:20%;left:50%;margin-left:-250px;z-index:90000000;border:2px solid #000;padding:15px;}',
                 '#cssdetectTextarea{width:100%;min-height:200px;margin-bottom:10px;}',
                 '#cssdetectStart, #cssdetectRestart{float:right; margin-left:10px;}'
-            ];
-            var html = [
+            ],
+            html = [
                 '<h2>Paste a list of pages on your site you want to test:</h2>',
                 '<textarea id="cssdetectTextarea"></textarea><br/><input type="button" id="cssdetectStart" value="Start"/>',
                 '<input type="button" id="cssdetectRestart" value="Reset to Beginning"/>'
             ];
-            var style = document.createElement('style');
-                style.innerHTML = css.join('');
+			
+			var style = document.createElement('style');
+				style.innerHTML = css.join('');
 
             var div = document.createElement('div');
                 div.id = 'cssdetectID';
@@ -143,69 +145,67 @@ var helium = {
 	//display final report for unused selectors
 	report:function(){
 
-		var frag = document.createDocumentFragment();
-		frag.appendChild( document.createElement('div') );
-		frag.lastChild.setAttribute('id','cssdetectID');
+		var flip=false,
+			html = [
+				'<h2>CSS Detection Report</h2>',
+				'<input type="button" id="cssreportResetID" value="New Test (Warning: This erases all data from the current test)"/>',
+				'<p> <span class="green">**Green: unmatched selectors</span>, <span class="black">**Black: matched selectors that are defined with non-matched selectors</span>, <span class="red">**Red: a malformed selector</span> <span class="blue">**Blue: a selector with a pseudo-class. You must test these manually.</span></p>',
+			];
 
-		var div = frag.lastChild;
-
-		var flip=false;
-
-		var str = '<h2>CSS Detection Report</h2>';
-		str+= '<input type="button" id="cssreportResetID" value="New Test (Warning: This erases all data from the current test)"/>';
-		str+= '<p> <span class="green">**Green: unmatched selectors</span>, <span class="black">**Black: matched selectors that are defined with non-matched selectors</span>, <span class="red">**Red: a malformed selector</span> <span class="blue">**Blue: a selector with a pseudo-class. You must test these manually.</span></p>';
-		
 		//loop through stylesheets
 		for(var i=0; i<helium.data.stylesheets.length; i++){
 			
 			//add stylesheet link
-			str+= '<div><strong><a href="'+ helium.data.stylesheets[i].url +'">'+ helium.data.stylesheets[i].url +'</a></strong></div>';
+			html.push('<div><strong><a href="'+ helium.data.stylesheets[i].url +'">'+ helium.data.stylesheets[i].url +'</a></strong></div>');
 			
 			var sels = helium.data.stylesheets[i].selectors;
 
 			if( sels.length > 0 ){
-				str+= '<ul>';
+
+				html.push('<ul>');
+
 				//display selectors that are false, ie never found on any tested pages
 				for(var d=0; d < sels.length; d++){
 
-					var tmpstr='';
-					var counttrue=0;					
+					var tmpstr = [],
+						counttrue = 0;
 
-					for(var e=0; e < sels[d].length; e++){
+					for(var e=0; e<sels[d].length; e++){
 
 						//identify selectors that were matched on a page somewhere, but are defined in combination with non-matched selectors.
 						if( sels[d][e].v === true && sels[d].length > 1){
-							if(e > 0){ tmpstr+=', '; }
-							tmpstr+= '<strong><span class="selector matchedselector">'+sels[d][e].s+'</span></strong>';
+							if(e > 0){ tmpstr.push(', '); }
+							tmpstr.push('<strong><span class="selector matchedselector">'+sels[d][e].s+'</span></strong>');
 							counttrue++;
 						}
-						
+
 						//shows if a pseudo-class is found. Not currently testing these so the user must do so manually
 						if( sels[d][e].v === 'pseudo_class' ){
-							if(e > 0){ tmpstr+=', '; }
-							tmpstr+='<strong class="pseudoclass">'+'<span class="selector">'+sels[d][e].s+'</span>'+'</strong>';
+							if(e > 0){ tmpstr.push(', '); }
+							tmpstr.push('<strong class="pseudoclass">'+'<span class="selector">'+sels[d][e].s+'</span>'+'</strong>');
 						}
-						
+
 						//shows as a broken selecgtor, ie it is written in a way the browser cannot parse.
 						if( sels[d][e].v === 'broken_selector' ){
-							if(e > 0){ tmpstr+=', '; }
-							tmpstr+='<strong class="badselector">'+'<span class="selector">'+sels[d][e].s+'</span>'+'</strong>';
+							if(e > 0){ tmpstr.push(', '); }
+							tmpstr.push('<strong class="badselector">'+'<span class="selector">'+sels[d][e].s+'</span>'+'</strong>');
 						}
 
 						//shows if the selector was not found anywhere.
 						if( sels[d][e].v === false ){
-							if(e > 0){ tmpstr+=', '; }
-							tmpstr+= '<span class="selector">'+sels[d][e].s+'</span>';
+							if(e > 0){ tmpstr.push(', '); }
+							tmpstr.push('<span class="selector">'+sels[d][e].s+'</span>');
 						}
 
 					}
-					
+
 					//detect if multiple selectors defined together are all matched. Remove if so.
-					if( counttrue === sels[d].length )
-						tmpstr='';
+					if( counttrue === sels[d].length ){
+						tmpstr = [];
+					}
 					counttrue = 0;
 
-					if(tmpstr !== ''){
+					if(tmpstr.length > 0){
 						if( flip ){
 							var classname=' class="alternate"';
 							flip = false;
@@ -213,34 +213,42 @@ var helium = {
 							var classname='';
 							flip = true;							
 						}						
-						str+='<li'+classname+'>'+tmpstr+'</li>';
+						html.push('<li'+classname+'>'+tmpstr.join('')+'</li>');
 					}
 
 				}
-				str+= '</ul>';
+				html.push('</ul>');
+
 			}else{
-				str+= 'No unmatched selectors found.';
+				html.push('No unmatched selectors found.');
 			}
+
 		}
 
-		str+='<style>';
-		str+='#cssdetectID{ font-family:arial;font-size:13px; font-weight:bold; color:#009000; border:2px solid #000; position:absolute; top:50px; left:50%; width:80%; margin-left:-40%; z-index:999999999; background-color:#fff;padding:15px;}';
-		str+='#cssdetectID p .black, #cssdetectID .matchedselector{ color:#323839; }';
-		str+='#cssdetectID p .red, #cssdetectID .badselector{ color:#cc0000; }';
-		str+='#cssdetectID p .green{ color:#009000; }';
-		str+='#cssdetectID p .blue, #cssdetectID .pseudoclass{ color:#0000cc; }';
-		str+='#cssdetectID .alternate{ background-color:#EBFEFF; }';
-		str+='#cssdetectID li:hover{ background-color:#8AD9FF; }';
-		str+='#cssdetectID li strong{ font-weight:bold;}';
-		str+='#cssdetectID div{ margin-top:20px; padding:5px 0 5px 0; border-top:3px solid #cc0000;}';
-		str+='#cssdetectID div a{ font-weight:bold; font-size:14px; color:#0064B1}';
-		str+='#cssdetectID #cssreportResetID{ position:absolute; top:3px;right:3px; padding:3px; border:1px solid #323839; background-color:#fff; -moz-border-radius: 5px; -webkit-border-radius: 5px;}';
-		str+='#cssdetectID #cssreportResetID:hover{ cursor:pointer; }';
-		str+='#cssdetectID #cssreportResetID:active{ text-shadow: 1px 1px 2px #000; }';
-		str+='</style>';
+		var css = [
+			'#cssdetectID{ font-family:arial;font-size:13px; font-weight:bold; color:#009000; border:2px solid #000; position:absolute; top:50px; left:50%; width:80%; margin-left:-40%; z-index:999999999; background-color:#fff;padding:15px;}',
+			'#cssdetectID p .black, #cssdetectID .matchedselector{ color:#323839; }',
+			'#cssdetectID p .red, #cssdetectID .badselector{ color:#cc0000; }',
+			'#cssdetectID p .green{ color:#009000; }',
+			'#cssdetectID p .blue, #cssdetectID .pseudoclass{ color:#0000cc; }',
+			'#cssdetectID .alternate{ background-color:#EBFEFF; }',
+			'#cssdetectID li:hover{ background-color:#8AD9FF; }',
+			'#cssdetectID li strong{ font-weight:bold;}',
+			'#cssdetectID div{ margin-top:20px; padding:5px 0 5px 0; border-top:3px solid #cc0000;}',
+			'#cssdetectID div a{ font-weight:bold; font-size:14px; color:#0064B1}',
+			'#cssdetectID #cssreportResetID{ position:absolute; top:3px;right:3px; padding:3px; border:1px solid #323839; background-color:#fff; -moz-border-radius: 5px; -webkit-border-radius: 5px;}',
+			'#cssdetectID #cssreportResetID:hover{ cursor:pointer; }',
+			'#cssdetectID #cssreportResetID:active{ text-shadow: 1px 1px 2px #000; }'
+		];
+		var style = document.createElement('style');
+			style.innerHTML = css.join('');
 
-		div.innerHTML = str;		
-		document.getElementsByTagName('body')[0].appendChild( frag );
+		var div = document.createElement('div');
+			div.id = 'cssdetectID';
+			div.innerHTML = html.join('');
+
+		helium.$('body')[0].appendChild(style);
+		helium.$('body')[0].appendChild(div);
 
 		//toggle selector visibility
         var sels = helium.$('#cssdetectID ul li');
@@ -253,46 +261,34 @@ var helium = {
             })();			
         }
 
-		//setup click-selector testing on the current page
-		//var sels = document.querySelectorAll('#cssdetectID .selector');
-		//for(var s=0; s<sels.length; s++){
-		//	(function(){
-		//		var i=s;
-		//		sels[i].addEventListener('click',function(){
-		//			console.log( document.querySelectorAll( this.innerHTML ) );
-		//		},false);
-		//	})();			
-		//}
-
 		//setup New Test button
-
         helium.on( helium.$('#cssreportResetID'), 'click', function(){
             helium.reset();
         },false);
 
 	},
-	
+
 	reset:function(){
 		//resets to beginning
 		localStorage.removeItem('cssdetect');
-		
+
 		var nodes = helium.$('#cssdetectID');
 		for(var i=0;i<nodes.length;i++){
 			nodes[i].parentNode.removeChild(nodes[i]);
 		}
-		
-		helium.init();	
+
+		helium.init();
 	},
 
 	//check if selectors found on pages
 	checkcss:function(){
-
 
 		//delay time period set with helium.data.timeout. For purposes of waiting for content to render after load event(XHR)
 		setTimeout(function(){
 
 			//find the current page in the list of pages
 			for(var i=0; i<helium.data.pages.length; i++){
+
 				if( helium.data.pages[i].url === helium.data.currenturl ){
 
 					//loop through stylesheet links on page
@@ -300,7 +296,9 @@ var helium = {
 
 						//find the stylesheet array element that matches the stylesheet link currently being worked on
 						var thislink = helium.data.pages[i].links[b];
+
 						for( var c=0; c < helium.data.stylesheets.length; c++){
+
 							if( helium.data.stylesheets[c].url === thislink ){
 
 								var stylesheet = helium.data.stylesheets[c];
@@ -343,8 +341,10 @@ var helium = {
 			helium.save();
 			
 			if( helium.data.pagelist.length > 0 ){
+
 				//navigate to next page
 				helium.nav();
+
 			}else{
 			
 				helium.data.status = 4;
@@ -442,8 +442,6 @@ var helium = {
             //remove duplicates from stylesheets list
             helium.data.stylesheets.sort();
 
-
-
 			for( var i=0; i < helium.data.stylesheets.length-1; i++){
 				if(helium.data.stylesheets[i] === helium.data.stylesheets[i+1]){
 					helium.data.stylesheets.splice(i--,1);
@@ -465,6 +463,7 @@ var helium = {
 			helium.checkstatus();
 
 		}
+
 	},
 
 	//list of stylesheet links on page
@@ -560,7 +559,6 @@ var helium = {
         //only add events to the first element in the target/querySelectorAll nodeList.
         //don't need to add in support for multiple targets
         target = target[0] || target;
-        console.log( target );
         target.addEventListener(ev, fn, false);
     },
 

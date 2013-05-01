@@ -55,19 +55,21 @@ var helium = {
 			//not started
 			
 			//prompt for list of pages. Build and display html overlay
-            var css = [
-                '#cssdetectID{width:500px;height:300px;background-color:#fff;position:absolute;top:20%;left:50%;margin-left:-250px;z-index:90000000;border:2px solid #000;padding:15px;}',
-                '#cssdetectTextarea{width:100%;min-height:200px;margin-bottom:10px;}',
-                '#cssdetectStart, #cssdetectRestart{float:right; margin-left:10px;}'
-            ],
-            html = [
-                '<h2>Paste a list of pages on your site you want to test:</h2>',
-                '<textarea id="cssdetectTextarea"></textarea><br/><input type="button" id="cssdetectStart" value="Start"/>',
+//            var css = [
+//                '#cssdetectID{width:500px;height:300px;background-color:#fff;position:absolute;top:20%;left:50%;margin-left:-250px;z-index:90000000;border:2px solid #000;padding:15px;}',
+//                '#cssdetectTextarea{width:100%;min-height:200px;margin-bottom:10px;}',
+//                '#cssdetectStart, #cssdetectRestart{float:right; margin-left:10px;}'
+//            ],
+            var html = [
+                '<h2>Paste a list of pages on your site you want to test</h2>',
+                '<textarea id="cssdetectTextarea"></textarea><input type="button" id="cssdetectStart" value="Start"/>',
                 '<input type="button" id="cssdetectRestart" value="Reset to Beginning"/>'
             ];
 			
-			var style = document.createElement('style');
-				style.innerHTML = css.join('');
+//			var style = document.createElement('style');
+//				style.innerHTML = css.join('');
+
+helium.generateCSS();
 
             var div = document.createElement('div');
                 div.id = 'cssdetectID';
@@ -137,11 +139,9 @@ var helium = {
 			//Finished, issue report
 			helium.callback();
 		}
-		
-		
 
 	},
-
+	
 	//display final report for unused selectors
 	report:function(){
 
@@ -149,15 +149,20 @@ var helium = {
 			html = [
 				'<h2>CSS Detection Report</h2>',
 				'<input type="button" id="cssreportResetID" value="New Test (Warning: This erases all data from the current test)"/>',
-				'<p> <span class="green">**Green: unmatched selectors</span>, <span class="black">**Black: matched selectors that are defined with non-matched selectors</span>, <span class="red">**Red: a malformed selector</span> <span class="blue">**Blue: a selector with a pseudo-class. You must test these manually.</span></p>',
+				'<p>',
+					'<div class="green">Green: unmatched selectors</div>',
+					'<div class="black">Black: matched selectors that are defined with non-matched selectors</div>',
+					'<div class="red">Red: a malformed selector</div>',
+					'<div class="blue">Blue: a selector with a pseudo-class. You must test these manually.</div>',
+				'</p>'
 			];
 
 		//loop through stylesheets
 		for(var i=0; i<helium.data.stylesheets.length; i++){
-			
+
 			//add stylesheet link
 			html.push('<div><strong><a href="'+ helium.data.stylesheets[i].url +'">'+ helium.data.stylesheets[i].url +'</a></strong></div>');
-			
+
 			var sels = helium.data.stylesheets[i].selectors;
 
 			if( sels.length > 0 ){
@@ -225,29 +230,83 @@ var helium = {
 
 		}
 
-		var css = [
-			'#cssdetectID{ font-family:arial;font-size:13px; font-weight:bold; color:#009000; border:2px solid #000; position:absolute; top:50px; left:50%; width:80%; margin-left:-40%; z-index:999999999; background-color:#fff;padding:15px;}',
-			'#cssdetectID p .black, #cssdetectID .matchedselector{ color:#323839; }',
-			'#cssdetectID p .red, #cssdetectID .badselector{ color:#cc0000; }',
-			'#cssdetectID p .green{ color:#009000; }',
-			'#cssdetectID p .blue, #cssdetectID .pseudoclass{ color:#0000cc; }',
-			'#cssdetectID .alternate{ background-color:#EBFEFF; }',
-			'#cssdetectID li:hover{ background-color:#8AD9FF; }',
-			'#cssdetectID li strong{ font-weight:bold;}',
-			'#cssdetectID div{ margin-top:20px; padding:5px 0 5px 0; border-top:3px solid #cc0000;}',
-			'#cssdetectID div a{ font-weight:bold; font-size:14px; color:#0064B1}',
-			'#cssdetectID #cssreportResetID{ position:absolute; top:3px;right:3px; padding:3px; border:1px solid #323839; background-color:#fff; -moz-border-radius: 5px; -webkit-border-radius: 5px;}',
-			'#cssdetectID #cssreportResetID:hover{ cursor:pointer; }',
-			'#cssdetectID #cssreportResetID:active{ text-shadow: 1px 1px 2px #000; }'
-		];
-		var style = document.createElement('style');
-			style.innerHTML = css.join('');
+//#cssdetectID{
+//	width: 500px;
+//	height: 300px;
+//	background-color: #fff;
+//	position: absolute;
+//	top: 20%;
+//	left: 50%;
+//	margin-left: -250px;
+//	z-index: 90000000;
+//	border: 2px solid #000;
+//	padding: 15px;
+//}
+//#cssdetectID{
+//	font-family: arial;
+//	font-size: 13px;
+//	font-weight: bold;
+//	color: #009000;
+//	border: 2px solid #000;
+//	position: absolute;
+//	top: 50px;
+//	left: 50%;
+//	width: 80%;
+//	margin-left: -40%;
+//	z-index: 999999999;
+//	background-color: #fff;
+//	padding: 15px;
+//}
+
+//#cssdetectTextarea{
+//	width:100%;
+//	min-height:200px;
+//	margin-bottom:10px;
+//}
+//#cssdetectStart, #cssdetectRestart{
+//	float:right;
+//	margin-left:10px;
+//}
+
+
+//#cssdetectID p .black, #cssdetectID .matchedselector{ color:#323839; }
+//#cssdetectID p .red, #cssdetectID .badselector{ color:#cc0000; }
+//#cssdetectID p .green{ color:#009000; }
+//#cssdetectID p .blue, #cssdetectID .pseudoclass{ color:#0000cc; }
+//#cssdetectID .alternate{ background-color:#EBFEFF; }
+//#cssdetectID li:hover{ background-color:#8AD9FF; }
+//#cssdetectID li strong{ font-weight:bold;}
+//#cssdetectID div{ margin-top:20px; padding:5px 0 5px 0; border-top:3px solid #cc0000;}
+//#cssdetectID div a{ font-weight:bold; font-size:14px; color:#0064B1}
+//#cssdetectID #cssreportResetID{ position:absolute; top:3px;right:3px; padding:3px; border:1px solid #323839; background-color:#fff; -moz-border-radius: 5px; -webkit-border-radius: 5px;}
+//#cssdetectID #cssreportResetID:hover{ cursor:pointer; }
+//#cssdetectID #cssreportResetID:active{ text-shadow: 1px 1px 2px #000; }
+
+
+//		var css = [
+//			'#cssdetectID{ font-family:arial;font-size:13px; font-weight:bold; color:#009000; border:2px solid #000; position:absolute; top:50px; left:50%; width:80%; margin-left:-40%; z-index:999999999; background-color:#fff;padding:15px;}',
+//			'#cssdetectID p .black, #cssdetectID .matchedselector{ color:#323839; }',
+//			'#cssdetectID p .red, #cssdetectID .badselector{ color:#cc0000; }',
+//			'#cssdetectID p .green{ color:#009000; }',
+//			'#cssdetectID p .blue, #cssdetectID .pseudoclass{ color:#0000cc; }',
+//			'#cssdetectID .alternate{ background-color:#EBFEFF; }',
+//			'#cssdetectID li:hover{ background-color:#8AD9FF; }',
+//			'#cssdetectID li strong{ font-weight:bold;}',
+//			'#cssdetectID div{ margin-top:20px; padding:5px 0 5px 0; border-top:3px solid #cc0000;}',
+//			'#cssdetectID div a{ font-weight:bold; font-size:14px; color:#0064B1}',
+//			'#cssdetectID #cssreportResetID{ position:absolute; top:3px;right:3px; padding:3px; border:1px solid #323839; background-color:#fff; -moz-border-radius: 5px; -webkit-border-radius: 5px;}',
+//			'#cssdetectID #cssreportResetID:hover{ cursor:pointer; }',
+//			'#cssdetectID #cssreportResetID:active{ text-shadow: 1px 1px 2px #000; }'
+//		];
+//		var style = document.createElement('style');
+//			style.innerHTML = css.join('');
 
 		var div = document.createElement('div');
 			div.id = 'cssdetectID';
 			div.innerHTML = html.join('');
 
-		helium.$('body')[0].appendChild(style);
+//		helium.$('body')[0].appendChild( helium.generateCSS() );
+helium.generateCSS();
 		helium.$('body')[0].appendChild(div);
 
 		//toggle selector visibility
@@ -267,6 +326,85 @@ var helium = {
         },false);
 
 	},
+
+generateCSS: function(){
+
+	var css = [
+		'#cssdetectID{',
+			'font-family: arial;',
+			'font-size: 13px;',
+			'font-weight: bold;',
+			'color: #fff;',
+			'position: absolute;',
+			'z-index: 999999999;',
+			'top: 10%;',
+			'width: 80%;',
+			'left: 10%;',
+			'background-color: #3498db;',
+			'padding: 20px;',
+			'border: none',
+		'}',
+		
+		'#cssdetectID div{',
+			'border:none;',
+		'}',
+		
+		'#cssdetectID h2{',
+			'margin: 0 0 10px 0;',
+			'padding: 0;',
+		'}',
+
+		'#cssdetectID textarea{',
+			'width: 100%;',
+			'height:300px;',
+			'border: none;',
+			'margin: 0 0 10px 0;',
+			'padding: 10px;',
+			'resize: none;',
+		'}',
+
+		'#cssdetectID input{',
+			'background: #fff;',
+			'border: none;',
+			'padding: 10px 20px 10px 20px;',
+			'margin: 0 10px 0 0;',
+			'font-size: 18px;',
+		'}',
+
+		'#cssdetectID input:hover{',
+			'background: #ecf0f1;',
+			'pointer: cursor;',
+		'}',
+
+		'#cssreportResetID{',
+			'position:absolute;',
+			'top: 10px;',
+			'right: 0;',
+		'}',
+
+		'.green{',
+			'color: #2ecc71;',
+		'}',
+
+		'.black{',
+			'color: #000000;',
+		'}',
+
+		'.red{',
+			'color: #e74c3c;',
+		'}',
+
+		'.blue{',
+			'color: #0000cc',
+		'}'
+
+	];
+
+	style = document.createElement('style');
+	style.innerHTML = css.join('');
+
+	helium.$('body')[0].appendChild( style );
+},
 
 	reset:function(){
 		//resets to beginning

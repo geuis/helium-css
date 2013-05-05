@@ -2,19 +2,18 @@
 <html>
 <head>
 <link href="style/style1.css" media="all" rel="stylesheet" type="text/css">
-<link href="style/style2.css" media="all" rel="stylesheet" type="text/css">
 
 <script src="../helium.js"></script>
 <script>
 window.addEventListener('load', function(){
     helium.init();
-
+	
 	setTimeout(function(){
 		if( document.querySelector('#cssdetectTextarea') ){
 			document.querySelector('#cssdetectTextarea').innerHTML = 'http://localhost:4000/test/test1.html\nhttp://localhost:4000/test/test2.html';
 		}
 	},1000);
-}, false);
+},false);
 </script>
 </head>
 <body>
@@ -22,5 +21,6 @@ window.addEventListener('load', function(){
 <div></div>
 <div class="test1"></div>
 <div class="test2" id="test2"></div>
+
 </body>
 </html>

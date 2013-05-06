@@ -1,13 +1,14 @@
-//Helium-css v1.0
-//Copyright 2013, Charles Lawrence http://twitter.com/geuis
-//License: MIT License(http://opensource.org/licenses/mit-license.php) 
-//release: 1/13/10
+//Helium-css v1.1
+//License: MIT License(http://opensource.org/licenses/mit-license.php)
+//Copyright 2010 - 2013, Charles Lawrence http://twitter.com/geuis
+//Release: 1/13/10
+//Last update: 5/5/2013
 
 var helium = {
 
-    callback : undefined,
+    callback: undefined,
 
-	data:{
+	data: {
 		//timeout
 		//status,
 		//findinglist,
@@ -17,7 +18,7 @@ var helium = {
 		//stylesheets
 	},
 
-	init:function(){
+	init: function(){
 
         // Callback on init or default to running the report.
         helium.callback = (arguments.length > 0) ? arguments[0] : helium.report;
@@ -39,7 +40,7 @@ var helium = {
 
 	},
 
-	checkstatus:function(){
+	checkstatus: function(){
 		//determine state
 		//0: not started
 		//1: finding stylesheets on all pages
@@ -55,21 +56,13 @@ var helium = {
 			//not started
 			
 			//prompt for list of pages. Build and display html overlay
-//            var css = [
-//                '#cssdetectID{width:500px;height:300px;background-color:#fff;position:absolute;top:20%;left:50%;margin-left:-250px;z-index:90000000;border:2px solid #000;padding:15px;}',
-//                '#cssdetectTextarea{width:100%;min-height:200px;margin-bottom:10px;}',
-//                '#cssdetectStart, #cssdetectRestart{float:right; margin-left:10px;}'
-//            ],
             var html = [
-                '<h2>Paste a list of pages on your site you want to test</h2>',
+                '<h1>Paste a list of pages on your site you want to test</h1>',
                 '<textarea id="cssdetectTextarea"></textarea><input type="button" id="cssdetectStart" value="Start"/>',
                 '<input type="button" id="cssdetectRestart" value="Reset to Beginning"/>'
             ];
-			
-//			var style = document.createElement('style');
-//				style.innerHTML = css.join('');
 
-helium.generateCSS();
+			helium.generateCSS();
 
             var div = document.createElement('div');
                 div.id = 'cssdetectID';
@@ -101,8 +94,8 @@ helium.generateCSS();
 
 
 			//add listener to reset all data
-			//document.getElementById('cssdetectRestart').addEventListener('click',function(){
             helium.on( helium.$('#cssdetectRestart'), 'click', function(){
+
                 //clear stored pages
                 document.getElementById('cssdetectTextarea').value = '';
                 
@@ -115,6 +108,7 @@ helium.generateCSS();
 
 		
 		if( helium.data.status === 1 ){
+
 			//finding stylesheets
 			helium.findstylesheets();
 			
@@ -129,6 +123,7 @@ helium.generateCSS();
 		}
 	
 		if( helium.data.status === 3 ){
+
 			//check if selectors found on pages
 			helium.checkcss();
 
@@ -136,6 +131,7 @@ helium.generateCSS();
 		}
 		
 		if( helium.data.status === 4 ){
+
 			//Finished, issue report
 			helium.callback();
 		}
@@ -143,31 +139,31 @@ helium.generateCSS();
 	},
 	
 	//display final report for unused selectors
-	report:function(){
+	report: function(){
 
 		var flip=false,
 			html = [
-				'<h2>CSS Detection Report</h2>',
+				'<h1>CSS Detection Report</h1>',
 				'<input type="button" id="cssreportResetID" value="New Test (Warning: This erases all data from the current test)"/>',
-				'<p>',
+				'<div class="cell" id="cssdetectDesc">',
 					'<div class="green">Green: unmatched selectors</div>',
 					'<div class="black">Black: matched selectors that are defined with non-matched selectors</div>',
-					'<div class="red">Red: a malformed selector</div>',
+					'<div class="red">Red: a malformed selector. ** Note: not all malformed selectors are bad. Chrome won\'t parse -moz extensions for example.</div>',
 					'<div class="blue">Blue: a selector with a pseudo-class. You must test these manually.</div>',
-				'</p>'
+				'</div>'
 			];
 
 		//loop through stylesheets
 		for(var i=0; i<helium.data.stylesheets.length; i++){
 
 			//add stylesheet link
-			html.push('<div><strong><a href="'+ helium.data.stylesheets[i].url +'">'+ helium.data.stylesheets[i].url +'</a></strong></div>');
+			html.push('<h2><a href="'+ helium.data.stylesheets[i].url +'">'+ helium.data.stylesheets[i].url +'</a></h2>');
 
 			var sels = helium.data.stylesheets[i].selectors;
 
 			if( sels.length > 0 ){
 
-				html.push('<ul>');
+				html.push('<ul class="cell">');
 
 				//display selectors that are false, ie never found on any tested pages
 				for(var d=0; d < sels.length; d++){
@@ -180,20 +176,20 @@ helium.generateCSS();
 						//identify selectors that were matched on a page somewhere, but are defined in combination with non-matched selectors.
 						if( sels[d][e].v === true && sels[d].length > 1){
 							if(e > 0){ tmpstr.push(', '); }
-							tmpstr.push('<strong><span class="selector matchedselector">'+sels[d][e].s+'</span></strong>');
+							tmpstr.push('<span class="matched_selector selector">'+sels[d][e].s+'</span>');
 							counttrue++;
 						}
 
 						//shows if a pseudo-class is found. Not currently testing these so the user must do so manually
 						if( sels[d][e].v === 'pseudo_class' ){
 							if(e > 0){ tmpstr.push(', '); }
-							tmpstr.push('<strong class="pseudoclass">'+'<span class="selector">'+sels[d][e].s+'</span>'+'</strong>');
+							tmpstr.push('<span class="pseudo_class selector">'+sels[d][e].s+'</span>');
 						}
 
 						//shows as a broken selecgtor, ie it is written in a way the browser cannot parse.
-						if( sels[d][e].v === 'broken_selector' ){
+						if( sels[d][e].v === 'invalid_selector' ){
 							if(e > 0){ tmpstr.push(', '); }
-							tmpstr.push('<strong class="badselector">'+'<span class="selector">'+sels[d][e].s+'</span>'+'</strong>');
+							tmpstr.push('<span class="invalid_selector selector">'+sels[d][e].s+'</span>');
 						}
 
 						//shows if the selector was not found anywhere.
@@ -225,88 +221,17 @@ helium.generateCSS();
 				html.push('</ul>');
 
 			}else{
-				html.push('No unmatched selectors found.');
+				html.push('<div class="cell">No unmatched selectors found.</div>');
 			}
 
 		}
-
-//#cssdetectID{
-//	width: 500px;
-//	height: 300px;
-//	background-color: #fff;
-//	position: absolute;
-//	top: 20%;
-//	left: 50%;
-//	margin-left: -250px;
-//	z-index: 90000000;
-//	border: 2px solid #000;
-//	padding: 15px;
-//}
-//#cssdetectID{
-//	font-family: arial;
-//	font-size: 13px;
-//	font-weight: bold;
-//	color: #009000;
-//	border: 2px solid #000;
-//	position: absolute;
-//	top: 50px;
-//	left: 50%;
-//	width: 80%;
-//	margin-left: -40%;
-//	z-index: 999999999;
-//	background-color: #fff;
-//	padding: 15px;
-//}
-
-//#cssdetectTextarea{
-//	width:100%;
-//	min-height:200px;
-//	margin-bottom:10px;
-//}
-//#cssdetectStart, #cssdetectRestart{
-//	float:right;
-//	margin-left:10px;
-//}
-
-
-//#cssdetectID p .black, #cssdetectID .matchedselector{ color:#323839; }
-//#cssdetectID p .red, #cssdetectID .badselector{ color:#cc0000; }
-//#cssdetectID p .green{ color:#009000; }
-//#cssdetectID p .blue, #cssdetectID .pseudoclass{ color:#0000cc; }
-//#cssdetectID .alternate{ background-color:#EBFEFF; }
-//#cssdetectID li:hover{ background-color:#8AD9FF; }
-//#cssdetectID li strong{ font-weight:bold;}
-//#cssdetectID div{ margin-top:20px; padding:5px 0 5px 0; border-top:3px solid #cc0000;}
-//#cssdetectID div a{ font-weight:bold; font-size:14px; color:#0064B1}
-//#cssdetectID #cssreportResetID{ position:absolute; top:3px;right:3px; padding:3px; border:1px solid #323839; background-color:#fff; -moz-border-radius: 5px; -webkit-border-radius: 5px;}
-//#cssdetectID #cssreportResetID:hover{ cursor:pointer; }
-//#cssdetectID #cssreportResetID:active{ text-shadow: 1px 1px 2px #000; }
-
-
-//		var css = [
-//			'#cssdetectID{ font-family:arial;font-size:13px; font-weight:bold; color:#009000; border:2px solid #000; position:absolute; top:50px; left:50%; width:80%; margin-left:-40%; z-index:999999999; background-color:#fff;padding:15px;}',
-//			'#cssdetectID p .black, #cssdetectID .matchedselector{ color:#323839; }',
-//			'#cssdetectID p .red, #cssdetectID .badselector{ color:#cc0000; }',
-//			'#cssdetectID p .green{ color:#009000; }',
-//			'#cssdetectID p .blue, #cssdetectID .pseudoclass{ color:#0000cc; }',
-//			'#cssdetectID .alternate{ background-color:#EBFEFF; }',
-//			'#cssdetectID li:hover{ background-color:#8AD9FF; }',
-//			'#cssdetectID li strong{ font-weight:bold;}',
-//			'#cssdetectID div{ margin-top:20px; padding:5px 0 5px 0; border-top:3px solid #cc0000;}',
-//			'#cssdetectID div a{ font-weight:bold; font-size:14px; color:#0064B1}',
-//			'#cssdetectID #cssreportResetID{ position:absolute; top:3px;right:3px; padding:3px; border:1px solid #323839; background-color:#fff; -moz-border-radius: 5px; -webkit-border-radius: 5px;}',
-//			'#cssdetectID #cssreportResetID:hover{ cursor:pointer; }',
-//			'#cssdetectID #cssreportResetID:active{ text-shadow: 1px 1px 2px #000; }'
-//		];
-//		var style = document.createElement('style');
-//			style.innerHTML = css.join('');
 
 		var div = document.createElement('div');
 			div.id = 'cssdetectID';
 			div.innerHTML = html.join('');
 
-//		helium.$('body')[0].appendChild( helium.generateCSS() );
-helium.generateCSS();
+		helium.generateCSS();
+		
 		helium.$('body')[0].appendChild(div);
 
 		//toggle selector visibility
@@ -315,7 +240,11 @@ helium.generateCSS();
             (function(){
                 var i=s;
                 helium.on( sels[i], 'click', function(){
-                    this.style.opacity = '0.5';
+
+					this.style.opacity === '0.5'?
+						this.style.opacity = '1':
+						this.style.opacity = '0.5';
+
                 },false);
             })();			
         }
@@ -327,86 +256,112 @@ helium.generateCSS();
 
 	},
 
-generateCSS: function(){
+	generateCSS: function(){
 
-	var css = [
-		'#cssdetectID{',
-			'font-family: arial;',
-			'font-size: 13px;',
-			'font-weight: bold;',
-			'color: #fff;',
-			'position: absolute;',
-			'z-index: 999999999;',
-			'top: 10%;',
-			'width: 80%;',
-			'left: 10%;',
-			'background-color: #3498db;',
-			'padding: 20px;',
-			'border: none',
-		'}',
-		
-		'#cssdetectID div{',
-			'border:none;',
-		'}',
-		
-		'#cssdetectID h2{',
-			'margin: 0 0 10px 0;',
-			'padding: 0;',
-		'}',
+		var css = [
+			'#cssdetectID{',
+				'font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;',
+				'font-size: 16px;',
+				'font-weight: bold;',
+				'color: #fff;',
+				'position: absolute;',
+				'z-index: 999999999;',
+				'top: 10%;',
+				'width: 80%;',
+				'left: 10%;',
+				'background-color: #3498db;', //blue
+				//'background-color: #B9090B;', //red
+				'padding: 10px 20px 20px 20px;',
+				'border: none',
+			'}',
+			'#cssdetectID .cell{',
+				'background: #fff;',
+				'padding: 10px;',
+				'color: #000;',
+			'}',
+			'#cssdetectID div{',
+				'border:none;',
+			'}',
+			'#cssdetectID .alternate{',
+				'border: 1px solid #eee;',
+				'border-width: 1px 0 1px 0;',
+			'}',
+			'#cssdetectID ul{',
+				'list-style: none;',
+				'padding: 0;',
+				'margin: 0;',
+			'}',
+			'#cssdetectID li:hover{',
+				'background: #eee',
+			'}',
+			'#cssdetectID h1{',
+				'margin: 0 0 10px 0;',
+				'padding: 0;',
+				'font-size: 20px;',
+			'}',
+			'#cssdetectID h2{',
+				'margin: 0 0 0 0;',
+				'padding: 0;',
+				'font-size: 16px;',
+			'}',
+			'#cssdetectDesc{',
+				'background: #8ac6ed;',
+			'}',
+			'#cssdetectID textarea{',
+				'width: 100%;',
+				'height:300px;',
+				'border: none;',
+				'margin: 0 0 10px 0;',
+				'padding: 10px;',
+				'resize: none;',
+				'outline: 1px none transparent;',
+				'border-radius: 0;',
+			'}',
+			'#cssdetectID input{',
+				'background: #fff;',
+				'border: none;',
+				'padding: 10px 20px 10px 20px;',
+				'margin: 0 10px 0 0;',
+				'font-size: 18px;',
+				'cursor: pointer;',
+				'-webkit-appearance: button;',
+			'}',
+			'#cssdetectID input:hover{',
+				'background: #ecf0f1;',
+				'pointer: cursor;',
+			'}',
+			'#cssdetectID a{',
+				'color: #fff',
+			'}',
+			'#cssreportResetID{',
+				'position:absolute;',
+				'top: 10px;',
+				'right: 10px;',
+			'}',
+			'#cssdetectID .green, #cssdetectID .selector{',
+				'color: #009000;',
+			'}',
 
-		'#cssdetectID textarea{',
-			'width: 100%;',
-			'height:300px;',
-			'border: none;',
-			'margin: 0 0 10px 0;',
-			'padding: 10px;',
-			'resize: none;',
-		'}',
+			'#cssdetectID .black, #cssdetectID .matched_selector{',
+				'color: #000000;',
+			'}',
 
-		'#cssdetectID input{',
-			'background: #fff;',
-			'border: none;',
-			'padding: 10px 20px 10px 20px;',
-			'margin: 0 10px 0 0;',
-			'font-size: 18px;',
-		'}',
+			'#cssdetectID .red, #cssdetectID .invalid_selector{',
+				'color: #cc0000;',
+			'}',
 
-		'#cssdetectID input:hover{',
-			'background: #ecf0f1;',
-			'pointer: cursor;',
-		'}',
+			'#cssdetectID .blue, #cssdetectID .pseudo_class{',
+				'color: #0000cc',
+			'}'
+		];
 
-		'#cssreportResetID{',
-			'position:absolute;',
-			'top: 10px;',
-			'right: 0;',
-		'}',
+		style = document.createElement('style');
+		style.innerHTML = css.join('');
 
-		'.green{',
-			'color: #2ecc71;',
-		'}',
+		helium.$('body')[0].appendChild( style );
+	},
 
-		'.black{',
-			'color: #000000;',
-		'}',
-
-		'.red{',
-			'color: #e74c3c;',
-		'}',
-
-		'.blue{',
-			'color: #0000cc',
-		'}'
-
-	];
-
-	style = document.createElement('style');
-	style.innerHTML = css.join('');
-
-	helium.$('body')[0].appendChild( style );
-},
-
-	reset:function(){
+	reset: function(){
 		//resets to beginning
 		localStorage.removeItem('cssdetect');
 
@@ -419,7 +374,7 @@ generateCSS: function(){
 	},
 
 	//check if selectors found on pages
-	checkcss:function(){
+	checkcss: function(){
 
 		//delay time period set with helium.data.timeout. For purposes of waiting for content to render after load event(XHR)
 		setTimeout(function(){
@@ -449,11 +404,12 @@ generateCSS: function(){
 									for( var e=0; e < stylesheet.selectors[d].length; e++ ){
 
 										var response = helium.find( stylesheet.selectors[d][e].s );
+
 										if( response === true ){
 											stylesheet.selectors[d][e].v = true;
 										}
-										if( response === 'bad_selector'){
-											stylesheet.selectors[d][e].v = response;
+										if( response === 'invalid_selector'){
+											stylesheet.selectors[d][e].v = 'invalid_selector';
 										}
 										if( response === 'pseudo_class' ){
 											stylesheet.selectors[d][e].v = 'pseudo_class';
@@ -499,16 +455,18 @@ generateCSS: function(){
 	},
 
 	//search current page for selectors
-	find:function(selector){
+	find: function(selector){
 
 		//try/catch is used because querySelectorAll throws errors when syntactically invalid selectors are passed through. Useful for detection purposes.
 		try{
+
 			//returns true if selector found on page, false if not
 			if( helium.$(selector).length > 0 ){
 				return true;
 			}
+
 		}catch(err){
-			return 'broken_selector';
+			return 'invalid_selector';
 		}
 
 		//detect if the selector includes a pseudo-class, i.e. :active, :focus
@@ -521,7 +479,7 @@ generateCSS: function(){
 
 	},
 
-	findstylesheets:function(){
+	findstylesheets: function(){
 
 		var page = {
 			url: helium.data.currenturl,
@@ -605,10 +563,10 @@ generateCSS: function(){
 	},
 
 	//list of stylesheet links on page
-	getcss:function(){
+	getcss: function(){
 
 		for(var i=0; i<helium.data.stylesheets.length; i++){
-		
+
 			//get content of stylesheets via XHR
 			helium.get( helium.data.stylesheets[i].url, i, function(index, data){		
 
@@ -624,21 +582,25 @@ generateCSS: function(){
 				for(var e=0; e<selectors.length; e++){
 
 					var sel = selectors[e].split(',');
-					
+
 					//check for multiple selectors defined together. eg body,h1,h2,h3{}
-					if( sel.length > 0 ){
-						
+					if( sel.length > 1 ){
+
 						var arr = [];
 						for(var t=0; t < sel.length; t++ ){
-						
-							arr.push({s: sel[t], v: false});
+
+							if( sel[t] !== ''){ //don't add empty selectors
+								arr.push({s: sel[t], v: false});
+							}
 
 						}
-						
+
 						results.push( arr );
 
 					}else{
+
 						results.push( [{ s: selectors[e], v: false}] );
+
 					}
 
 				}
@@ -663,7 +625,7 @@ generateCSS: function(){
 
 
 	//navigate to next page in list
-	nav:function( list ){
+	nav: function( list ){
 	
 		//if no list is provided, default to pagelist
 		if( !list ){
@@ -678,15 +640,16 @@ generateCSS: function(){
 			helium.data.currenturl = next;
 
 		helium.save();
-											
+
 		//redirect
-		if( next !== undefined )
+		if( next !== undefined ){
 			window.location = next;
+		}
 
 	},
 	
 	//store list of pages to be checked
-	setPageList:function(pagelist){
+	setPageList: function(pagelist){
 
 		helium.data.pagelist = pagelist;
 		helium.save();
@@ -701,7 +664,7 @@ generateCSS: function(){
     },
 
 	//return info from localStorage
-	load:function(){
+	load: function(){
 
 		if( !localStorage.cssdetect )
 			localStorage.cssdetect = JSON.stringify({});
@@ -710,7 +673,7 @@ generateCSS: function(){
 
 	},
 
-	save:function(){
+	save: function(){
 		
 		//store page data into localStorage
 		localStorage.cssdetect = JSON.stringify( helium.data );
@@ -718,11 +681,11 @@ generateCSS: function(){
 	},
 
     // when something goes wrong, nice to helium.clear() to nuke the local storage
-    clear:function() {
+    clear: function() {
         delete localStorage['cssdetect'];
     },
 
-	get:function(url, index, callback){
+	get: function(url, index, callback){
 		if(window.attachEvent){
 			var http = new ActiveXObject("Microsoft.XMLHTTP");
 		}else{

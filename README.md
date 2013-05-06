@@ -36,7 +36,7 @@ Helium accepts a list of URLs for different sections of a site then loads and pa
 
 1. Once Helium is setup, when you load your site you will see a box with a textarea where you input your URL list.
 
-2. After you paste your list of links, click Start (lower right) to begin the process. Clicking "Reset to Beginning" clears the textarea and stored data.
+2. After you paste your list of links, click Start (lower left) to begin the process. Clicking "Reset to Beginning" clears the textarea and stored data.
 
 3. The test will proceed to load and process each url you gave. When it is finished, you are presented with a report window that lists each stylesheet URL that was detected. Under each stylesheet, it will list the CSS selectors that were not detected to be in use on any page. 
 

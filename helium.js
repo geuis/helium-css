@@ -2,7 +2,7 @@
 //License: MIT License(http://opensource.org/licenses/mit-license.php)
 //Copyright 2010 - 2013, Charles Lawrence http://twitter.com/geuis
 //Release: 1/13/10
-//Last update: 5/5/2013
+//Last update: 5/7/2013
 
 var helium = {
 
@@ -142,22 +142,33 @@ var helium = {
 	report: function(){
 
 		var flip=false,
+
 			html = [
 				'<h1>CSS Detection Report</h1>',
 				'<input type="button" id="cssreportResetID" value="New Test (Warning: This erases all data from the current test)"/>',
+                '<h2> <a id="cssreportDownloadReport" href="" target="_blank"> Download Report </a> </h2>',
 				'<div class="cell" id="cssdetectDesc">',
 					'<div class="green">Green: unmatched selectors</div>',
 					'<div class="black">Black: matched selectors that are defined with non-matched selectors</div>',
 					'<div class="red">Red: a malformed selector. ** Note: not all malformed selectors are bad. Chrome won\'t parse -moz extensions for example.</div>',
 					'<div class="blue">Blue: a selector with a pseudo-class. You must test these manually.</div>',
 				'</div>'
-			];
+			],
+
+            download_report = [
+                '{G} Green: unmatched selectors',
+                '{B} Black: matched selectors that are defined with non-matched selectors',
+                '{R} Red: a malformed selector. ** Note: not all malformed selectors are bad. Chrome won\'t parse -moz extensions for example.',
+                '{BL} Blue: a selector with a pseudo-class. You must test these manually.'
+            ];
 
 		//loop through stylesheets
 		for(var i=0; i<helium.data.stylesheets.length; i++){
 
 			//add stylesheet link
 			html.push('<h2><a href="'+ helium.data.stylesheets[i].url +'">'+ helium.data.stylesheets[i].url +'</a></h2>');
+
+            download_report.push('\r\nStylesheet: ' + helium.data.stylesheets[i].url + '\r\n');
 
 			var sels = helium.data.stylesheets[i].selectors;
 
@@ -171,31 +182,46 @@ var helium = {
 					var tmpstr = [],
 						counttrue = 0;
 
+                    download_report.push([]);
+                    var download_report_length = download_report.length-1;
+
 					for(var e=0; e<sels[d].length; e++){
+
+                        //trim white space
+                        sels[d][e].s = helium.trim(sels[d][e].s);
 
 						//identify selectors that were matched on a page somewhere, but are defined in combination with non-matched selectors.
 						if( sels[d][e].v === true && sels[d].length > 1){
-							if(e > 0){ tmpstr.push(', '); }
+
 							tmpstr.push('<span class="matched_selector selector">'+sels[d][e].s+'</span>');
+
+							download_report[download_report_length].push('{B}' + sels[d][e].s);
+
 							counttrue++;
 						}
 
 						//shows if a pseudo-class is found. Not currently testing these so the user must do so manually
 						if( sels[d][e].v === 'pseudo_class' ){
-							if(e > 0){ tmpstr.push(', '); }
 							tmpstr.push('<span class="pseudo_class selector">'+sels[d][e].s+'</span>');
+
+							download_report[download_report_length].push('{BL}' + sels[d][e].s);
+
 						}
 
 						//shows as a broken selecgtor, ie it is written in a way the browser cannot parse.
 						if( sels[d][e].v === 'invalid_selector' ){
-							if(e > 0){ tmpstr.push(', '); }
 							tmpstr.push('<span class="invalid_selector selector">'+sels[d][e].s+'</span>');
+
+							download_report[download_report_length].push('{R}' + sels[d][e].s);
+
 						}
 
 						//shows if the selector was not found anywhere.
 						if( sels[d][e].v === false ){
-							if(e > 0){ tmpstr.push(', '); }
 							tmpstr.push('<span class="selector">'+sels[d][e].s+'</span>');
+
+                            download_report[download_report_length].push('{G}' + sels[d][e].s);
+
 						}
 
 					}
@@ -214,17 +240,27 @@ var helium = {
 							var classname='';
 							flip = true;							
 						}						
-						html.push('<li'+classname+'>'+tmpstr.join('')+'</li>');
-					}
+						html.push('<li'+classname+'>'+tmpstr.join(', ')+'</li>');
+                        
+                        download_report[download_report_length] = download_report[download_report_length].join(', ');
+
+					}else{
+
+                        download_report.pop();
+
+                    }
 
 				}
 				html.push('</ul>');
 
 			}else{
 				html.push('<div class="cell">No unmatched selectors found.</div>');
+                download_report.push('No unmatched selectors found.');
 			}
 
 		}
+
+
 
 		var div = document.createElement('div');
 			div.id = 'cssdetectID';
@@ -253,6 +289,22 @@ var helium = {
         helium.on( helium.$('#cssreportResetID'), 'click', function(){
             helium.reset();
         },false);
+
+        if( window.URL.createObjectURL && window.Blob ){
+
+            //setup Download Report button
+            var blob = new Blob([download_report.join('\r\n')], { type : 'text/rtf' });
+            var btn = helium.$('#cssreportDownloadReport');
+            btn[0].href = window.URL.createObjectURL(blob);
+            btn[0].download = 'helium-report.txt';
+
+        }else{
+
+            helium.on( helium.$('#cssreportDownloadReport'), 'click', function(){
+                alert('Report downloads aren\'t supported in this browser. The necessary file api\'s aren\'t available. Use Chrome or Firefox.');
+            });
+
+        }
 
 	},
 
@@ -655,6 +707,16 @@ var helium = {
 		helium.save();
 
 	},
+
+    trim: function(str){
+
+        if( typeof String.prototype.trim === 'function' ){
+            return str.trim();
+        }else{
+            return str.replace(/^\s+/, '').replace(/\s+$/, '');
+        }
+
+    },
 
     on: function(target, ev, fn){
         //only add events to the first element in the target/querySelectorAll nodeList.

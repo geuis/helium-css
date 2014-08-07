@@ -314,7 +314,7 @@ var helium = {
         'left: 10%;',
         'background-color: #3498db;', //blue
         //'background-color: #B9090B;', //red
-        'padding: 10px 20px 20px 20px;',t
+        'padding: 10px 20px 20px 20px;',
         'border: none',
       '}',
       '#cssdetectID .cell{',

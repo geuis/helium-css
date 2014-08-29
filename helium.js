@@ -1,9 +1,9 @@
 /* global alert, ActiveXObject */
 // Helium-css v1.1
 // License: MIT License(http://opensource.org/licenses/mit-license.php)
-// Copyright 2010 - 2013, Charles Lawrence http://twitter.com/geuis
+// Copyright 2010 - 2014, Charles Lawrence http://twitter.com/geuis
 // Release: 1/13/10
-// Last update: 5/7/2013
+// Last update: 8/29/2014
 
 var helium = {
 
@@ -69,7 +69,6 @@ var helium = {
       div.id = 'cssdetectID';
       div.innerHTML = html.join('');
 
-      helium.$('body')[0].appendChild(style);
       helium.$('body')[0].appendChild(div);
 
       //add listener to save list and start processing

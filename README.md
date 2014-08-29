@@ -67,6 +67,13 @@ I have decided I will never adapt Helium to support IE6 or 7.
 
 3. No sitemap XML support: Right now, the URL list has to be line separated. No CSV or sitemap XML format is currently supported, though it will be in a future release.
 
+### Running the tests:
+Helium doesn't have actual unit tests yet. I've been meaning to add them for a while (years) and will soon.
 
+To run the test pages, run a local server from the project root directory and hit http://localhost/test/test1.html. 
 
+For a very simple server example using Ruby (because its on most systems):
 
+	```html
+    ruby -run -e httpd . -p 5000
+  ```

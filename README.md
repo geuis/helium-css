@@ -74,6 +74,4 @@ To run the test pages, run a local server from the project root directory and hi
 
 For a very simple server example using Ruby (because its on most systems):
 
-	```html
     ruby -run -e httpd . -p 5000
-  ```

@@ -5,6 +5,8 @@ The tool is javascript-based and runs from the browser.
 Helium accepts a list of URLs for different sections of a site then loads and parses each page to build up a list of all stylesheets. It then visits each page in the URL list and checks if the selectors found in the stylesheets are used on the pages. Finally, it generates a report that details each stylesheet and the selectors that were not found to be used on any of the given pages.
 
 
+
+
 ##### Note: You really should only run Helium on a local, development, or otherwise privately accessible version of your site. If you run this on your public site, every visitor will see the Helium test environment.
 
 #####  PLEASE READ THE "IMPORTANT STUFF" SECTION BELOW!!
@@ -17,6 +19,8 @@ Helium accepts a list of URLs for different sections of a site then loads and pa
 	<script type="text/javascript" src="path/to/helium.js"></script>
 	```
 	##### Note: path/to/helium.js needs to reflect the path of where you place the javascript file.
+  
+  If you would like to use a CDN hosted version of Helium, checkout https://cdnjs.com/libraries/helium-css.
 
 2. Helium is initiated by calling the method "helium.init()". This has to be placed somewhere on the page where it gets called after page load. An example of this is:
 
